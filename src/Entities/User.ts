@@ -1,6 +1,9 @@
-import {Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn} from "typeorm"
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm"
+
 import {Layout} from "./Layout";
 import {Content} from "./Content";
+import bcrypt from "bcrypt";
+
 
 
 export enum UserRole{
@@ -25,7 +28,7 @@ export class User {
         enum:UserRole,
         default:[UserRole.INACTIVE,UserRole.EDITOR]
     })
-    role :UserRole[]
+    role :UserRole
 
     @OneToMany(() => Layout,(layout)=>layout.user)
     layouts:Layout[]

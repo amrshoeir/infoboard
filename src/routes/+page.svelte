@@ -1,2 +1,17 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h2>Main website content</h2>
+
+<div>
+    <div class = "full-screen">
+        <div class = "video-headers">
+            asd
+        </div>
+    </div>
+    <div class = "content">
+    asd
+    </div>
+    <div class = "misc">
+    asd
+    </div>
+
+</div>
+<a href="/manage/">login</a>
