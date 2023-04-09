@@ -2,9 +2,6 @@ import {Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm"
 
 import {Layout} from "./Layout";
 import {Content} from "./Content";
-import bcrypt from "bcrypt";
-
-
 
 export enum UserRole{
     ADMIN="admin",
@@ -15,13 +12,13 @@ export enum UserRole{
 export class User {
     @PrimaryGeneratedColumn()
     id :number
-    @Column()
+    @Column('text')
     username: string
-    @Column()
+    @Column('text')
     password :string
-    @Column()
+    @Column('text')
     name :string
-    @Column()
+    @Column('text')
     email :string
     @Column({
         type:"set",
