@@ -32,6 +32,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@nestjs/typeorm": "^9.0.1",
 		"bcrypt": "^5.1.0",
 		"jsonwebtoken": "^9.0.0",
 		"mysql2": "^3.2.0",
