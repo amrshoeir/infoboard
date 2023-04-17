@@ -1,37 +1,76 @@
 
 
-<script>
-    import {goto} from '$app/navigation';
-    export let email = '';
-    export let password = '';
+<script lang="ts">
+    import type { PageData } from './$types';
 
-    function handleLogin() {
-        // TODO: check credentials on the server
-        // If login is successful, navigate to the content management
-        if(email && password){
-            goto('/manage/content');
+    export let data:PageData;
+    export let loginEmail = '';
+    export let registerEmail = '';
+    export let loginPassword = '';
+    export let registerPassword = '';
+    export let name = '';
+
+    async function handleLogin() {
+
+        const cookie = data.userCookie;
+        if(cookie == "true?"){
+        console.log("auth correct")
         }
 
-        // location.reload();
-
     }
+
+    function handleRegister(){
+        console.log("user creating attempt")
+    };
 </script>
 
+<div class="header">
+    <h2 class="header-text"> Thesis App</h2>
+    <h5 class="header-text">Author: Amr Sheir</h5>
+</div>
+<div>
+    <div class="login-box">
 
-<h1> LOGIN PAGE </h1>
-<div class="login-box">
-    <form method="POST" action="?/login">
-    <label for="email">Email:</label>
-    <input type="email" id="email" bind:value={email}>
+        <form method="POST" action="?/login">
+            <label for="loginEmail">Email:</label>
+            <input type="email" name="email" id="loginEmail" bind:value={loginEmail}>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" bind:value={password}>
+            <label for="loginPassword">Password:</label>
+            <input type="password" name="password" id="loginPassword" bind:value={loginPassword}>
 
-    <button on:click={handleLogin}>Login</button>
-    </form>
+            <button on:click={handleLogin}>Login</button>
+
+        </form>
+    </div>
+    <div class="login-box">
+
+        <form method="POST" action="?/register">
+            <label for="registerEmail">Email:</label>
+            <input type="email" name="email" id="registerEmail" bind:value={registerEmail}>
+
+            <label for="registerPassword">Password:</label>
+            <input type="password" name="password" id="registerPassword" bind:value={registerPassword}>
+            <label for="name">Name:</label>
+            <input type="text" name="password" id="name" bind:value={name}>
+
+            <button on:click={handleRegister}>Register</button>
+
+        </form>
+        <h4>{data.userCookie}</h4>
+
+    </div>
+
 </div>
 
 <style>
+    .header-text{
+        font-family:"Segoe UI"
+
+    }
+    .header{
+       width:150px;
+       margin:0 auto;
+    }
     input {
         display: block;
         margin-bottom: 10px;
