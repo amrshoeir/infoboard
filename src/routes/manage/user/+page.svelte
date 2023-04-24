@@ -1,17 +1,19 @@
 <script lang="ts">
-
-
     import type { PageData } from './$types';
     import {goto} from "$app/navigation";
     import { onMount } from 'svelte';
     import UserForm from "./UserForm.svelte";
 
     export let data:PageData;
+    export const roles = {
+        admin:"Admin",
+        content_creator:"Content creator",
+        inactive:"Inactive"
+    }
     let formType= "Add";
-
-    let users = data.user;
+    let users = data.users;
     let len = Object.keys(users).length;
-    let password = "*******"
+    const password = "*******"
     let editNdx;
     let isForm=false;
 
@@ -20,8 +22,15 @@
         for (let i = 0; i < len; i++) {
             users[i]['editing'] = false;
         }
-        console.log(users);
     });
+    function roleAssign(users, i):string {
+        switch(users[i].role){
+            case "admin" : return roles.admin;
+            case "content_creator": return roles.content_creator;
+            case "inactive" : return roles.inactive;
+            default: return roles.inactive
+        }
+    }
     function editUser(i){
         formType="Edit";
         editNdx=i;
@@ -37,13 +46,10 @@
         formType="Delete";
         editNdx=i;
         isForm=true;
-
-        console.log('why')
     }
     function navContent(){
         goto('./content')
     }
-
 
 
 
@@ -70,7 +76,7 @@
         <td>{password}</td>
         <td>{users[0].email}</td>
         <td>{users[0].name}</td>
-        <td>{users[0].role}</td>
+        <td>{roleAssign(users,0)}</td>
         <td>
             <button class="button edit" on:click={()=>{editUser(0)}} >Edit</button>
             <button class="button add"  on:click={()=>{addUser()}}>Add</button>
@@ -81,10 +87,10 @@
         {#if i>=1}
     <tr>
         <td>{user.username}</td>
-        <td>*********</td>
+        <td>{password}</td>
         <td>{user.email}</td>
         <td>{user.name}</td>
-        <td>{user.role}</td>
+        <td>{roleAssign(users,i)}</td>
         <td>
             <button class="button edit" on:click={()=>{editUser(i)}}>Edit</button>
             <button class="button delete" on:click={()=>{deleteUser(i)}}>Delete</button>

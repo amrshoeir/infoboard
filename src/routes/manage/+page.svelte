@@ -3,25 +3,17 @@
 <script lang="ts">
     import type { PageData } from './$types';
 
+
     export let data:PageData;
-    export let loginEmail = '';
-    export let registerEmail = '';
-    export let loginPassword = '';
-    export let registerPassword = '';
-    export let name = '';
+    export let email = '';
+    export let password = '';
 
     async function handleLogin() {
-
         const cookie = data.userCookie;
         if(cookie == "true?"){
         console.log("auth correct")
         }
-
     }
-
-    function handleRegister(){
-        console.log("user creating attempt")
-    };
 </script>
 
 <div class="header">
@@ -30,41 +22,26 @@
 </div>
 <div>
     <div class="login-box">
-
         <form method="POST" action="?/login">
-            <label for="loginEmail">Email:</label>
-            <input type="email" name="email" id="loginEmail" bind:value={loginEmail}>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" bind:value={email}>
 
-            <label for="loginPassword">Password:</label>
-            <input type="password" name="password" id="loginPassword" bind:value={loginPassword}>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" bind:value={password}>
 
             <button on:click={handleLogin}>Login</button>
 
         </form>
     </div>
-    <div class="login-box">
 
-        <form method="POST" action="?/register">
-            <label for="registerEmail">Email:</label>
-            <input type="email" name="email" id="registerEmail" bind:value={registerEmail}>
-
-            <label for="registerPassword">Password:</label>
-            <input type="password" name="password" id="registerPassword" bind:value={registerPassword}>
-            <label for="name">Name:</label>
-            <input type="text" name="password" id="name" bind:value={name}>
-
-            <button on:click={handleRegister}>Register</button>
-
-        </form>
         <h4>{data.userCookie}</h4>
 
     </div>
 
-</div>
 
 <style>
     .header-text{
-        font-family:"Segoe UI"
+        font-family:"Segoe UI",sans-serif;
 
     }
     .header{
