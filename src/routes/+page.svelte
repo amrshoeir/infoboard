@@ -1,42 +1,41 @@
-<div class="header">
-    <h2 class="header-text">Main website content</h2>
 
+<div class = "container">
+    <div class = "content">
+        <p> content </p>
+    </div>
+    <div class="duration-bar">
+
+    </div>
 </div>
 
-<div>
-    <div class = "full-screen">
-        <div class = "video-headers">
-            asd
-        </div>
-    </div>
-    <div class = "content-player">
-    asd
-    </div>
-    <div class = "misc">
-    asd
-    </div>
-
+<div class = "misc">
+<!--todo QR codes-->
 </div>
+
 <a href="/manage/">login</a>
 
 <style>
-    .header-text{
+    *{
         font-family:"Segoe UI"
-
+     }
+    .container{
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 aspect ratio */
     }
-    .header{
-        width:300px;
-        margin:0 auto;
-    }
-    .content-player{
+    .content{
         border: 1px solid red;
-        width:300px;
-        height:533px;
-        margin:0 auto;
-        border-radius: 5px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 10px; /*making space for the duration bar */
+        right: 0;
     }
     .duration-bar{
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 5px; /* set the height of the duration bar */
+        background-color: blue; /* set the color of the duration bar */
     }
 </style>

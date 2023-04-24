@@ -1,0 +1,10 @@
+<style>
+
+    body {
+        background-color: #222;
+        color: #fff;
+        font-family: sans-serif;
+    }
+</style>
+
+<slot/>

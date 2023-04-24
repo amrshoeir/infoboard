@@ -1,4 +1,5 @@
 <script>
+    import * as validators from "svelte-forms/validators";
     export let type="Add";
     export let isForm = false;
     export let ndx;
@@ -45,13 +46,13 @@
         <h2>Edit User</h2>
         <form method="POST" action="?/edit">
             <label for="username">Username:</label>
-            <input type="text" id="username edit" name="username" bind:value={users[ndx].username} ><br>
+            <input type="text" id="username edit" name="username"  bind:value={users[ndx].username} ><br>
 
             <label for="password">Password:</label>
-            <input type="password" id="password edit" name="password" bind:value={users[ndx].password}><br>
+            <input type="text" id="password edit" name="password"><br>
 
             <label for="email">Email:</label>
-            <input type="email" id="email edit" name="email" bind:value={users[ndx].email} ><br>
+            <input type="email" id="email edit" name="email" validators={validators.email()} bind:value={users[ndx].email} ><br>
 
             <label for="name">Name:</label>
             <input type="text" id="name edit" name="name" bind:value={users[ndx].name} ><br>
@@ -62,6 +63,7 @@
                 <option value="content_creator">Content creator</option>
                 <option value="inactive">Inactive</option>
             </select><br>
+            <input type="hidden" name="id" bind:value={users[ndx].id}>
 
             <button class="button edit">Edit</button>
         </form>
@@ -70,10 +72,13 @@
         <h3> Are you sure you want to delete {users[ndx].name}?</h3>
         <form method="POST" action="?/delete">
         <input type="hidden" id="email delete" name="email" bind:value={users[ndx].email}>
+        <input type="hidden" name="id" bind:value={users[ndx].id}>
         <button class="button delete">Delete</button>
         </form>
     {/if}
+
 </div>
+
 </div>
 
 <style>
