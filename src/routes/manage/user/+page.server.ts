@@ -1,16 +1,17 @@
-import db from "../../../database/orm/operations";
+import db from "../../../database/orm/Operations";
 import type {PageServerLoad} from "../../../../.svelte-kit/types/src/routes/manage/$types";
 import type {Actions} from "@sveltejs/kit";
 import {error, redirect} from "@sveltejs/kit";
-import {User} from "../../../Entities/User";
+import {User} from "../../../database/Entities/User";
 
 
 
 export const load = (async ({cookies}) => {
-    const users = await db.getUsers("*");
+    const users = await db.getAll('user');
     const role = cookies.get('session')
+    const username = cookies.get('user')
     if (role=='admin'){
-        console.log(role)
+        console.log(username)
         return {
             users
         };
@@ -30,7 +31,7 @@ export const actions = {
             name: data.get("name") as string,
             role: data.get("role") as any
         };
-        const user = new User(userdata.id,userdata.username,userdata.password,userdata.email,userdata.name,userdata.role)
+        const user = new User(userdata)
         console.log(user);
         if(user){
             await db.create(user)
@@ -50,14 +51,15 @@ export const actions = {
             name: data.get("name") as string,
             role: data.get("role") as any
         };
-        const user = new User(userdata.id,userdata.username,userdata.password,userdata.email,userdata.name,userdata.role);
+        const user = new User(userdata);
         await db.update(user,userdata.id)
         throw redirect(303, '/manage/user')
     },
     delete: async({request})=>{
         const data = await request.formData()
-        await db.delete(data.get("email") as string);
-        console.log(data)
+        const id = data.get("id") as any;
+        const user = await db.getOne('user',id);
+        await db.delete(new User(user));
         throw redirect(303, '/manage/user')
     }
 }satisfies Actions

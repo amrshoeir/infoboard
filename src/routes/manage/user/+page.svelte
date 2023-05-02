@@ -22,6 +22,7 @@
         for (let i = 0; i < len; i++) {
             users[i]['editing'] = false;
         }
+        users=users
     });
     function roleAssign(users, i):string {
         switch(users[i].role){
@@ -100,7 +101,7 @@
     {/each}
     </tbody>
 </table>
-    <UserForm type={formType} bind:isForm={isForm} ndx={editNdx} users={users}/>
+    <UserForm type={formType} bind:isForm={isForm} bind:ndx={editNdx} users={users}/>
 
 
 <style>
