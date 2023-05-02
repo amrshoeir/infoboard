@@ -1,12 +1,12 @@
-import db from "../../database/orm/operations"
+import db, { Operations } from "../../database/orm/Operations"
 import type {Actions} from "@sveltejs/kit";
 import type {PageServerLoad} from "../../../.svelte-kit/types/src/routes/manage/$types";
 import {error, redirect} from "@sveltejs/kit";
+import user from "../../database/Entities/User";
 
-const key ="email"
-
-const debug = await db.getUsers(key);
-console.log(debug[0].email);
+const key ="amr.sheir@pte.hu"
+const debug = await db.getOne('user',await db.getIdByKey('user',"email",key));
+console.log(debug.email);
 
 
 
@@ -29,8 +29,8 @@ export const actions = {
         if(email&&password) {
             if(await db.verifyPassword(email, password)) {
                 const role = await db.checkRole(email) as string;
-                const id = await db.findIdByKey("email",email)
-                let username = await db.find(id);
+                const id = await db.getIdByKey('user',"email",email)
+                let username = await db.getOne('user',id);
                 username = username.username;
                 if(role=="admin"){
                     cookies.set("session","admin")

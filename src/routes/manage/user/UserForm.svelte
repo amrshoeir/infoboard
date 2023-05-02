@@ -1,27 +1,30 @@
 <script>
     import * as validators from "svelte-forms/validators";
+    import { onMount } from "svelte";
     export let type="Add";
     export let isForm = false;
     export let ndx;
     export let users;
+
+
     function closeForm() {
         isForm = false;
-        console.log(isForm)
     }
-    function handleKeyDown(event) {
+    function escapeForm(event) {
         if (event.key === "Escape") {
             closeForm();
         }
     }
 </script>
 
-<div id="overlay" style={isForm? 'display:block;':'display:none;'} on:click|self={closeForm} on:keydown={handleKeyDown} >
+<div id="overlay" style={isForm? 'display:block;':'display:none;'} on:click|self={closeForm} on:keydown={escapeForm} >
 <div id="user-form">
     {#if type=="Add"}
     <h2>Add User</h2>
     <form method="POST" action="?/add">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" ><br>
+
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password"><br>
@@ -52,7 +55,7 @@
             <input type="text" id="password edit" name="password"><br>
 
             <label for="email">Email:</label>
-            <input type="email" id="email edit" name="email" validators={validators.email()} bind:value={users[ndx].email} ><br>
+            <input type="email" id="email edit" name="email" bind:value={users[ndx].email} ><br>
 
             <label for="name">Name:</label>
             <input type="text" id="name edit" name="name" bind:value={users[ndx].name} ><br>
