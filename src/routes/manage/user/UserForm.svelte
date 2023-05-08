@@ -1,6 +1,4 @@
 <script>
-    import * as validators from "svelte-forms/validators";
-    import { onMount } from "svelte";
     export let type="Add";
     export let isForm = false;
     export let ndx;
@@ -27,7 +25,7 @@
 
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password"><br>
+        <input type="password" id="password" name="password" required minlength="8" title="Must include a number, capital letter, and a small letter"><br>
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" ><br>

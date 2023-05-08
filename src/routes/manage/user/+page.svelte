@@ -52,13 +52,34 @@
         goto('./content')
     }
 
+    async function logoutUser(){
+        try {
+            const response = await fetch('/manage/user', {
+                method: 'POST'
+            });
+            if (response.ok) {
+                setTimeout(()=>{
+                    goto('/manage')
+                },500)
+            } else {
+                console.error('Failed to logout user');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+    };
+
 
 
 </script>
 
+<div class="top-header">
+    <h1>User Management</h1>
+    <button on:click={()=>{logoutUser()}} class="nav-button logout">Logout</button>
+    <button on:click={navContent} class="nav-button" >Content</button>
 
-<h1>User Management</h1>
-<button on:click={navContent} class="nav-button" >Content</button>
+</div>
 
 <table>
     <thead>
@@ -139,10 +160,14 @@
         background-color: #555555;
         float: right;
     }
+
+    .top-header {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 auto;
+    }
+
     .nav-button {
-        position: absolute;
-        top: 16px;
-        right: 16px;
         background-color: #4CAF50;
         border: none;
         color: white;
@@ -150,8 +175,14 @@
         text-align: center;
         text-decoration: none;
         display: inline-block;
+        height:60px;
+        position: relative;
         font-size: 20px;
         cursor: pointer;
+        margin-left: 10px; /* Add left margin to separate buttons */
+    }
+    .logout{
+        background: grey;
     }
 
 </style>

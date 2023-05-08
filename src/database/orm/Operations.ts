@@ -20,9 +20,9 @@ export class Operations{
         const res = await client.query(formatted) as any;
         return res[0][0];
     }
-    async getIdByKey(table:string,key:string,value:string):Promise<number>{
+    async getIdByKey(table:string,key:string,value:any):Promise<number>{
         const query = `SELECT id FROM ${table} WHERE ${key}=?`
-        const formatted = client.format(query,value);
+        const formatted = client.format(query,value as number);
         const res = await client.query(formatted) as any;
         return res[0][0].id;
     }
@@ -43,8 +43,8 @@ export class Operations{
         }
         if(input instanceof Content){
             const content = input;
-            const sql = `SELECT name FROM content WHERE name = ?`;
-            const query = client.format(sql,content.name)
+            const sql = `SELECT name FROM content WHERE id = ?`;
+            const query = client.format(sql,content.id)
             const res = await client.query(query) as any;
             if(res[0][0]){
                 console.log('Content already exists')
@@ -52,6 +52,19 @@ export class Operations{
             else{
                 console.log('Adding..')
                 await content.add(content);
+            }
+        }
+        if(input instanceof Layout){
+            const layout = input;
+            const sql = `SELECT name FROM layout WHERE name = ?`;
+            const query = client.format(sql,layout.name)
+            const res = await client.query(query) as any;
+            if(res[0][0]){
+                console.log('Layout already exists')
+            }
+            else{
+                console.log('Adding..')
+                await layout.add(layout);
             }
         }
     }
@@ -69,6 +82,8 @@ export class Operations{
         }
         if(input instanceof Layout){
             const layout = input;
+            await layout.edit(layout);
+
         }
 
     }
@@ -80,6 +95,10 @@ export class Operations{
         if(input instanceof Content){
             const content = input as Content;
             await content.delete(content.id);
+        }
+        if(input instanceof Layout) {
+            const layout = input as Layout;
+            await layout.delete(layout.id);
         }
     }
     async verifyPassword(email:string,password:string):Promise<boolean> {
@@ -99,30 +118,12 @@ export class Operations{
         const res = await client.query(formatted) as any;
         return res[0][0].role;
     }
-    async addLayouts(data:object,email:string){
-        const query = client.format("SELECT id FROM user WHERE email=?",email);
-        const res = await client.query(query) as any;
-        const id = res[0][0].id;
-        const test_data={
-            name:"text-layout",
-            duration:30,
-            layout_data:JSON.stringify(data),
-            user_id: id as number
-        }
-        const get = await client.query("SELECT * FROM layout;") as any;
-        console.log(get[0])
-        // console.log(test_data)
-        // const insert_query = client.format("INSERT INTO layout VALUE (1,?,?,?,?)",[test_data.name,test_data.duration,
-        //                                                                                          test_data.layout_data,test_data.user_id])
-        // const insert_res = await client.query(insert_query);
-        // console.log(insert_res[0])
-    }
     generateJWT(user: User): string {
         return jwt.sign({userId: user.id}, process.env.JWT_SECRET as string, {
         expiresIn: '2m',
     });
   }
-     convertDateSQL(date?:string) {
+    convertDateSQL(date?:string) {
         const dt = new Date(date || '').toISOString().split("T"); // Changes "YYYY-MM-DDTHH:mm:ss.sssZ" to "YYYY-MM-DD HH:MM:SS"
         const mysqlTime = dt[0] + " " + dt[1].slice(0, 8);
         return mysqlTime;
