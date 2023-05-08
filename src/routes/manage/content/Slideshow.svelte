@@ -1,6 +1,8 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
 
+  export let content;
+
   let assetsPath = "../../../src/lib/assets"
   let currentContentPath = assetsPath + "/current-content"
   let pastContentPath = assetsPath + "/past-content"
@@ -9,7 +11,6 @@
   let interval;
   let timeLeft = 15; // Seconds per slide
   let durationPercent = 100; // The percentage of time left in the current slide
-  console.log(currentContentPath + "/test")
   let images = [
     currentContentPath + "/test/img1.png",
     currentContentPath + "/test/img2.png",
@@ -17,7 +18,7 @@
   ];
 
 
-  function nextSlide() {
+  const nextSlide = () => {
     currentSlide = (currentSlide + 1) % numSlides;
     timeLeft = 15; // Reset time for new slide
     durationPercent = 100; // Reset duration bar
@@ -46,7 +47,7 @@
 
 <div class="slideshow">
   <div class="overlay">
-  <div class="slide-left" on:click={()=>{previousSlide()}} on:keyup={console.log('nothing')}>
+  <div class="slide-left" on:click={()=>{previousSlide()}} on:keyup>
       <img
         class="slide-img"
         src={images[0]}
@@ -66,7 +67,7 @@
   </div>
   </div>
   <div class="overlay">
-    <div class="slide-right" on:click={()=>{nextSlide()}} on:keyup={console.log('nothing')}>
+    <div class="slide-right" on:click={()=>{nextSlide()}} on:keyup>
       <img
         class="slide-img"
         src={images[2]}

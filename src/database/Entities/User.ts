@@ -31,7 +31,7 @@ export class User {
     async get(key:string){
       return client.query(`SELECT ${key} FROM user`);
     }
-    async add(user:User):Promise<any>{
+    async add(user:User){
      const query = "INSERT INTO user SET ?"
      const formatted = client.format(query,user)
      await client.query(query,user);
