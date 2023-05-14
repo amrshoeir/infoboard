@@ -3,7 +3,7 @@
   "content": {
     "youtube_id": "",
     "max_size": "10 MB",
-    "filepath": "./src/"
+    "filepath": "Video/src/"
   },
   "file_types": ".mp4, .mov, .wav, .mkv"
 }

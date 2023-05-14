@@ -9,7 +9,6 @@ import {User} from "../../../database/Entities/User";
 export const load = (async ({cookies}) => {
     const users = await db.getAll('user');
     const role = cookies.get('session')
-    const username = cookies.get('user')
     if (role=='admin'){
         return {
             users
@@ -31,7 +30,6 @@ export const actions = {
             role: data.get("role") as any
         };
         const user = new User(userData)
-        console.log(user);
         if(user){
             await db.create(user)
             console.log("User created");
@@ -43,6 +41,10 @@ export const actions = {
     },
     edit: async ({request})=>{
         const data = await request.formData()
+        if (!data.get('password')){
+            console.log('yeet')
+        }
+        console.log(data.get('passwo    rd'))
         const userData = {
             id:data.get("id") as any,
             username: data.get("username") as string,
@@ -55,15 +57,17 @@ export const actions = {
         await db.update(user,userData.id)
         throw redirect(303, '/manage/user')
     },
-    delete: async({request})=>{
+    delete: async({request,cookies})=>{
         const data = await request.formData()
         const id = data.get("id") as any;
         const user = await db.getOne('user',id);
-        if(user.role == 'inactive'){
+        const username = cookies.get('user')
+        if(user.role == 'inactive' && user.username != username){
             await db.delete(new User(user));
             throw redirect(303, '/manage/user')
         }
         else{
+            console.log('cannot delete user')
             throw redirect(303, '/manage/user')
         }
 

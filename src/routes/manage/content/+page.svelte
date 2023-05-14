@@ -1,35 +1,37 @@
 <script lang="ts">
-    import type {PageData} from './$types';
     import Slideshow from "./Slideshow.svelte";
+    import { to_number } from "svelte/internal";
+    import SimplerSlideshow from "./SimplerSlideshow.svelte";
 
-    export let data:PageData
+    export let data;
 
     const user = data.user;
     const content = data.content
     const layout = data.layout
     let len = Object.keys(layout).length;
+    let inputImages;
+    let inputVideo;
     let addingLayout = false;
     let addingContent = false;
     let selectedLayout;
+    let video_selection;
 
 
-    function selectLayout() {
-        const layoutData = selectedLayout.layout_data
-        const layoutTitle = layoutData.title;
-        const layoutPath =  layoutData.content.filepath;
-        if(layoutTitle=='Image Layout'){
+    function selectLayout(selectedLayout) {
+        const title = selectedLayout.name
+        if(title=='Image(s)'){
+            let content_data = selectedLayout.layout_data.content
             let images;
             let size;
             let path;
             let contentData={
                 images,
-                size,
+                size:to_number(content_data.size),
                 path
             }
-            console.log(layoutData.file_types)
+            console.log(content_data)
         }
-        if(layoutTitle =='Video Layout'){
-            console.log(layoutData.file_types)
+        if(title =='Video'){
             let yt='';
             let size='';
             let path = '';
@@ -40,11 +42,32 @@
             }
             console.log(contentData);
         }
-        if(layoutTitle =='Image with text'){
-        return 0;
-        }
-
     }
+
+   const onFileSelected = async (e)=>{
+       const reader = (file)=> new Promise((resolve,reject)=> {
+           const fr = new FileReader();
+           fr.onload = () => resolve(fr);
+           fr.onerror = (err) => reject(err);
+           fr.readAsDataURL(file);
+         }
+       )
+       const logImages = async(fileList)=>{
+           let fileResults = [];
+           const frPromises = fileList.map(reader);
+           try{
+               fileResults= await Promise.all(frPromises)
+           }catch(err){
+               console.error(err);
+               return;
+           }
+           fileResults.forEach(() => {
+               console.log(fileResults)
+           });
+           inputImages = fileResults
+       }
+       await logImages([...e.target.files]);
+   }
 
 </script>
 <div class="container">
@@ -88,7 +111,7 @@
         {#if !addingContent}<button class="button add-cancel" on:click={()=>{addingContent=true}}>Add content</button>
         {:else}<button class="button add-cancel" on:click={()=>{addingContent=false}}>Cancel</button>
         {/if}
-        <form on:submit={addingContent=false} method="POST" action="?/addContent">
+        <form id="add-content" on:submit={addingContent=false} method="POST" action="?/addContent">
         {#if addingContent}
             <div class="form-elements">
                 <label for="content-name">Name:</label>
@@ -100,25 +123,40 @@
                 <label for="content-end-time">Ends at:</label>
                 <input type="datetime-local" id="content-end-time" name="end_time"><br>
                 <label for="content set-layout">Layout:</label>
-                <select id="content set-layout" name="layout_id" bind:value={selectedLayout} on:change={()=>{selectLayout()}}>
+                <select id="content set-layout" bind:value={selectedLayout} on:change={()=>{selectLayout(selectedLayout)}}>
                     {#each layout as item}
+                        <input type="hidden" name="layout_id" value={item.id}>
                         <option value={item}>{item.layout_data.title}</option>
                     {/each}
                 </select>
                 <br>
+                <label for="data-title">Description:</label>
+                <input type="text" id="data-title" name="content_title"><br>
                 {#if selectedLayout}
                     {#if selectedLayout.name==='Image(s)'}
-                        <label for="image data-title">Description:</label>
-                        <input type="text" id="image data-title" name="content-title">
                         <label for="image data-images">Image(s):</label>
-                        <input type="image" id="image data-images" name="images" title="Max 5 images" src="" multiple>
+                        <input type="file" id="image data-images" name="media" accept={selectedLayout.layout_data.file_types} multiple
+                               on:change={(e) => onFileSelected(e)}>
+                            {#if inputImages}
+                                {#each inputImages as image}
+                                  <img src={image.result} alt="avatar"/>
+                                {/each}
+                            {/if}
 
                     {/if}
                     {#if selectedLayout.name==='Video'}
-                        <label for="video data-title">Description:</label>
-                        <input type="text" id="video data-title" name="content-title">
-                        <label for="video data-video">Upload Video</label>
-                        <input id="video data-video" type="file" accept={selectedLayout.layout_data.file_types}>
+                        <label for="upload-video"><input type="radio" id="upload-video" name="video-selection"
+                        value="upload" bind:group={video_selection}>Upload</label>
+                        <label for="youtube"><input type="radio" id="youtube" name="video-selection"
+                        value="youtube" bind:group={video_selection}>Youtube</label>
+                        {#if video_selection === 'youtube'}
+                            <label for="video youtube">Youtube Link:</label>
+                            <input id="video youtube" type="text">
+                        {/if}
+                        {#if video_selection==='upload'}
+                            <label for="video upload">Upload Video</label>
+                            <input id="video upload" type="file" name="media" accept={selectedLayout.layout_data.file_types}>
+                        {/if}
                     {/if}
                 {/if}
                 <input type="hidden" name="user_id" bind:value={user.id} />
@@ -127,18 +165,22 @@
             </div>
         {/if}
              </form>
-        <p>----------------------------</p>       
+        <p>----------------------------</p>
         {#each content as item}
             <form id="deleteContent" method="POST" action="?/deleteContent">
-             <h4>{item.content_data.title}</h4>
+                <h4>{item.content_data.title}</h4>
+                <h4>{item.content_data.content.file_names}</h4>
             <input type="hidden" id="content-element" name="id" bind:value={item.id} />
-            <button class="button delete">Delete content</button><br>
+            <button  class="button delete">Delete content</button><br>
             </form>
         {/each}
     </div>
     </div>
 </div>
 <Slideshow {content}  />
+{#if content}
+    <SimplerSlideshow {content} />
+{/if}
 
 <style>
     .crud-display{

@@ -43,8 +43,8 @@ export class Operations{
         }
         if(input instanceof Content){
             const content = input;
-            const sql = `SELECT name FROM content WHERE id = ?`;
-            const query = client.format(sql,content.id)
+            const sql = `SELECT name FROM content WHERE name=?`;
+            const query = client.format(sql,content.name)
             const res = await client.query(query) as any;
             if(res[0][0]){
                 console.log('Content already exists')
@@ -123,8 +123,12 @@ export class Operations{
         expiresIn: '2m',
     });
   }
-    convertDateSQL(date?:string) {
-        const dt = new Date(date || '').toISOString().split("T"); // Changes "YYYY-MM-DDTHH:mm:ss.sssZ" to "YYYY-MM-DD HH:MM:SS"
+    convertDateSQL(date?:string):string{
+        let dt = new Date().toISOString().split("T");
+        // Changes "YYYY-MM-DDTHH:mm:ss.sssZ" to "YYYY-MM-DD HH:MM:SS"
+        if(date){
+             dt = new Date(date).toISOString().split("T")
+        }
         const mysqlTime = dt[0] + " " + dt[1].slice(0, 8);
         return mysqlTime;
     }
