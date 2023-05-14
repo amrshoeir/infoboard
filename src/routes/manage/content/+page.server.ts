@@ -9,27 +9,6 @@ import * as fs from 'fs';
 const layouts_path="src/lib/assets/Layouts/";
 
 
-
-const layout_data = {
-    title:"text-layout",
-    filepath:"$Layouts/text/"
-}
-
-const content_data = {
-    title:"test2",
-    img_filepath:"/contents",
-    filenames:['img2.png','img3.png','someText.txt']
-}
-const content_test_data={
-    name:"test2",
-    duration:30,
-    start_time:"2023-04-27 00:00:00",
-    end_time:"2023-04-30 00:00:00",
-    content_data:JSON.stringify(content_data),
-    user_id:1,
-    layout_id:2
-}
-
 export const load = (async ({cookies}) => {
     const role = cookies.get('session')
     const username = cookies.get('user') as string;
@@ -49,21 +28,42 @@ export const load = (async ({cookies}) => {
 export const actions = {
     addContent: async({request})=>{
         const data = await request.formData()
-        const layout_id = data.get('layout_id') as any;
-        const id = layout_id.id;
+        const layout = await db.getOne('layout',data.get('layout_id') as any)
+        //fs.writeFileSync(layouts_path+'Image(s)/img1.png',data.getAll('media') as any,'base64')
+        const file = {
+            file_names:data.getAll('media') as Array<string>,
+            folder_name:data.get('content_title') as string
+        }
+        const path = layouts_path + layout.layout_data.content.filepath;
+        const content_json = {
+            title: file.folder_name,
+            content:{
+                file_names:file.file_names,
+                file_path:`${path}${file.folder_name}/`
+            }
+        }
         const contentData = {
             id:data.get('id') as any,
             name:data.get('name') as string,
             duration:data.get('duration') as any,
-            start_time:data.get('start_time') as any,
-            end_time:data.get('end_time') as any,
-            content_data:data.get('content_data') as any,
-            layout_id:id,
+            start_time:db.convertDateSQL(data.get('start_time') as string),
+            end_time:db.convertDateSQL(data.get('end_time') as string),
+            content_data:JSON.stringify(content_json),
+            layout_id:layout.id,
             user_id:data.get('user_id') as any
         }
-        console.log(contentData)
         const content = new Content(contentData);
         console.log(content)
+        await db.create(content);
+        // if(content_json.title){
+        //     path = content_json.content.file_path
+        //     fs.mkdir(path, {recursive:true} ,()=>{console.log('folder created')})
+        //     file.file_names.forEach((value)=>{
+        //         fs.writeFileSync(path + value,JSON.stringify(file.file_names),"base64");
+        //     })
+        // }
+        throw redirect(303,'/manage/content')
+
     },
     editContent: async({request})=>{
         const data = await request.formData()

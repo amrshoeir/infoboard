@@ -1,4 +1,5 @@
-import { client } from "../db";
+import { client } from "$database/db";
+import db from "$database/orm/Operations";
 
 
 export class Content{
@@ -6,14 +7,14 @@ export class Content{
     id:number
     name:string
     duration = 15;
-    start_time:Date = new Date();
-    end_time:Date = new Date()
+    start_time:string = db.convertDateSQL('');
+    end_time:string = db.convertDateSQL('');
     content_data:string
     layout_id:number
     user_id:number
 
     //constructor
-    constructor(content:{id:number, name:string, duration:number, start_time:Date, end_time:Date, content_data:string, layout_id:number, user_id:number}){
+    constructor(content:{id:number, name:string, duration:number, start_time:string, end_time:string, content_data:string, layout_id:number, user_id:number}){
         this.id=content.id;
         this.name=content.name;
         this.duration=content.duration;

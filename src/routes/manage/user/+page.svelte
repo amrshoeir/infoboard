@@ -1,10 +1,9 @@
 <script lang="ts">
-    import type { PageData } from './$types';
     import {goto} from "$app/navigation";
     import { onMount } from 'svelte';
     import UserForm from "./UserForm.svelte";
 
-    export let data:PageData;
+    export let data
     export const roles = {
         admin:"Admin",
         content_creator:"Content creator",
