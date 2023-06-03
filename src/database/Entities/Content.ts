@@ -31,9 +31,7 @@ export class Content{
     async add(content:Content){
         const query = "INSERT INTO content SET ?"
         const formatted = client.format(query,content)
-        await client.query(formatted);
-        console.log("content added")
-
+        await client.query(formatted)
     }
     async edit(content:Content){
         const query = 'UPDATE content SET ? WHERE id=?;'
@@ -46,7 +44,6 @@ export class Content{
         const query = "DELETE FROM content WHERE id=?"
         const formatted = client.format(query,id);
         await client.query(formatted);
-        console.log("content deleted")
     }
 }
 export default Content;

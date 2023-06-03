@@ -1,7 +1,8 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
     import { onMount } from 'svelte';
-    import UserForm from "./UserForm.svelte";
+    import UserForm from "$lib/components/Forms/UserForm.svelte";
+    import Modal from "$lib/components/Modal.svelte";
 
     export let data
     export const roles = {
@@ -14,9 +15,7 @@
     let len = Object.keys(users).length;
     const password = "*******"
     let editNdx;
-    let isForm=false;
-
-
+    let dialog;
     onMount(() => {
         for (let i = 0; i < len; i++) {
             users[i]['editing'] = false;
@@ -33,52 +32,25 @@
     }
     function editUser(i){
         formType="Edit";
+        dialog.showModal();
         editNdx=i;
-        isForm=true;
         users[i].editing = !users[i].editing;
-
     }
     function addUser(){
         formType="Add";
-        isForm=true;
+        dialog.showModal();
     }
     function deleteUser(i){
-        formType="Delete";
-        editNdx=i;
-        isForm=true;
-    }
-    function navContent(){
-        goto('./content')
-    }
-
-    async function logoutUser(){
-        try {
-            const response = await fetch('/manage/user', {
-                method: 'POST'
-            });
-            if (response.ok) {
-                setTimeout(()=>{
-                    goto('/manage')
-                },500)
-            } else {
-                console.error('Failed to logout user');
-            }
-        } catch (error) {
-            console.error(error);
+        if(users[i].role!='inactive') {
+            alert('The user is active!');
+            return;
         }
-
-    };
-
-
+        formType="Delete";
+        dialog.showModal();
+        editNdx=i;
+    }
 
 </script>
-
-<div class="top-header">
-    <h1>User Management</h1>
-    <button on:click={()=>{logoutUser()}} class="nav-button logout">Logout</button>
-    <button on:click={navContent} class="nav-button" >Content</button>
-
-</div>
 
 <table>
     <thead>
@@ -121,13 +93,14 @@
     {/each}
     </tbody>
 </table>
-    <UserForm type={formType} bind:isForm={isForm} bind:ndx={editNdx} users={users}/>
-
-
+<Modal bind:dialog on:submit={()=>location.reload()}>
+    <UserForm type={formType} ndx={editNdx} users={users} bind:dialog on:submit={()=>location.reload()} />
+</Modal>
 <style>
     table {
         border-collapse: collapse;
         width: 100%;
+        margin-top:90px;
     }
     th, td {
         padding: 8px;
@@ -135,7 +108,7 @@
         border-bottom: 1px solid #ddd;
     }
     tr:hover {
-        background-color: #f5f5f5;
+        background-color: #007EA7;
     }
     .button {
         background-color: #4CAF50;

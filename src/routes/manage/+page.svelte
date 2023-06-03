@@ -1,10 +1,6 @@
-
-
 <script lang="ts">
-    import type { PageData } from './$types';
 
-
-    export let data:PageData;
+    export let data
     export let email = '';
     export let password = '';
 
@@ -16,11 +12,11 @@
     }
 </script>
 
+<div class="login-page">
 <div class="header">
-    <h2 class="header-text"> Thesis App</h2>
+    <h2 class="header-text">InfoBoard</h2>
     <h5 class="header-text">Author: Amr Sheir</h5>
 </div>
-<div>
     <div class="login-box">
         <form method="POST" action="?/login">
             <label for="email">Email:</label>
@@ -32,12 +28,8 @@
             <button on:click={handleLogin}>Login</button>
 
         </form>
-    </div>
-
-        <h4>{data.userCookie}</h4>
-
-    </div>
-
+        </div>
+</div>
 
 <style>
     .header-text{
@@ -45,8 +37,9 @@
 
     }
     .header{
-       width:150px;
+       width:200px;
        margin:0 auto;
+        text-align:center;
     }
     input {
         display: block;
@@ -80,5 +73,8 @@
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
+    }
+    .login-page{
+        margin-top:100px;
     }
 </style>

@@ -1,4 +1,4 @@
-import db, { Operations } from "../../database/orm/Operations"
+import db from "../../database/orm/Operations"
 import type {Actions} from "@sveltejs/kit";
 import type {PageServerLoad} from "../../../.svelte-kit/types/src/routes/manage/$types";
 import {error, redirect} from "@sveltejs/kit";
@@ -8,12 +8,8 @@ const key ="amr.sheir@pte.hu"
 const debug = await db.getOne('user',await db.getIdByKey('user',"email",key));
 console.log(debug.email);
 
-
-
-
 export const load = (async ({ cookies }) => {
     const userCookie = await cookies.get('user');
-
     return {
         userCookie
     };
@@ -21,10 +17,10 @@ export const load = (async ({ cookies }) => {
 
 export const actions = {
     login: async ({request,cookies}) =>{
-        // fetches data with right type
         const data = await request.formData()
         const email = data.get("email") as string;
         const password = data.get("password") as string;
+        console.log('manage page cookie print: ' +cookies.get('user'))
         // checks if empty
         if(email&&password) {
             if(await db.verifyPassword(email, password)) {
@@ -47,6 +43,7 @@ export const actions = {
 
             // todo verification errors
             }else {
+                console.log(email +' ' + password)
                 console.log("verification went wrong ig")
             }
         }else {

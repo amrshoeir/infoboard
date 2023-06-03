@@ -71,9 +71,15 @@ export class Operations{
     async update(input:User|Content|Layout, id:number){
         if(input instanceof User){
             const user = input;
-            const hashedPassword = await bcrypt.hash(user.password,10);
-            const mainUser = await this.getOne('user',id)
-            await user.edit(user)
+            const current = await this.getOne('user',id);
+            if(user.password == '' || await bcrypt.compare(user.password,current.password)){
+                user.password = current.password;
+                console.log('same pass, not editing')
+                await user.edit(user)
+            }else{
+                user.password= await bcrypt.hash(user.password,10);
+                await user.edit(user)
+            }
         }
        if(input instanceof Content){
            const content = input;
