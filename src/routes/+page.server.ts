@@ -1,11 +1,11 @@
 import type { PageServerLoad } from "../../.svelte-kit/types/src/routes/manage/$types";
 import db from "../database/orm/Operations";
 
-export const load = (async ({ cookies }) => {
-
+export const load = (async () => {
   const content = await db.getAll('content');
-
+  const layout = await db.getAll('layout');
   return {
-    content
+    content,
+    layout
   };
 }) satisfies PageServerLoad;

@@ -40,7 +40,7 @@ export class User {
       const query = 'UPDATE user SET ? WHERE id=?;'
       const formatted = client.format(query,[user,user.id]);
       const result = await client.query(query,[user,user.id]) as any;
-      console.log("updated")
+      console.log(result[0].info + ', updated')
     }
   async delete(id:number){
     const sql = 'DELETE FROM user WHERE id=?';

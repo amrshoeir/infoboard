@@ -1,9 +1,0 @@
-{
-  "title": "Images layout",
-  "content": {
-    "img_max": 5,
-    "max_size": "3 MB",
-    "filepath": "Image(s)/src/"
-  },
-  "file_types":".jpg, .jpeg, .png, .webp"
-}
