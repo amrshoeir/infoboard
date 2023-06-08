@@ -1,5 +1,4 @@
 import { client } from "../db";
-import bcrypt from "bcrypt";
 
 export enum UserRole{
     admin="Admin",
@@ -14,19 +13,17 @@ export class User {
     password:string;
     email:string;
     name:string;
-    role:UserRole
+    role:string;
 
-    //constructor
-     constructor(user:{id:number,username:string,password:string,email:string,name:string,role:UserRole}){
+    //constructors
+     constructor(user:{id:number,username:string,password:string,email:string,name:string,role:string}){
          this.id = user.id;
          this.username = user.username;
          this.password = user.password;
          this.email = user.email;
          this.name = user.name;
          this.role = user.role;
-
      }
-
      //methods
     async get(key:string){
       return client.query(`SELECT ${key} FROM user`);
@@ -34,13 +31,12 @@ export class User {
     async add(user:User){
      const query = "INSERT INTO user SET ?"
      const formatted = client.format(query,user)
-     await client.query(query,user);
+     await client.query(formatted);
     }
     async edit(user:User){
       const query = 'UPDATE user SET ? WHERE id=?;'
       const formatted = client.format(query,[user,user.id]);
-      const result = await client.query(query,[user,user.id]) as any;
-      console.log(result[0].info + ', updated')
+      await client.query(formatted);
     }
   async delete(id:number){
     const sql = 'DELETE FROM user WHERE id=?';

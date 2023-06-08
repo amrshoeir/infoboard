@@ -36,9 +36,8 @@ export class Content{
     async edit(content:Content){
         const query = 'UPDATE content SET ? WHERE id=?;'
         const formatted = client.format(query,[content,content.id]);
-        const result = await client.query(query,[content,content.id]) as any;
-        console.log(result)
-        console.log("content updated")
+        await client.query(formatted);
+
     }
     async delete(id:number){
         const query = "DELETE FROM content WHERE id=?"

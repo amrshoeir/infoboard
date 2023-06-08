@@ -31,14 +31,13 @@ export class Layout{
     }
     async add(layout:Layout){
       const query = "INSERT INTO layout SET ?"
-      await client.query(query,layout);
+      const formatted = client.format(query,layout)
+      await client.query(formatted);
     }
     async delete(id:number){
         const query = 'DELETE FROM layout WHERE id=?;'
         const formatted = client.format(query,id);
-        console.log(formatted)
         await client.query(formatted);
-        console.log("deleted")
     }
 
 }

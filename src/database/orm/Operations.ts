@@ -4,11 +4,6 @@ import {User} from "../Entities/User";
 import {Content} from "../Entities/Content";
 import {Layout} from "../Entities/Layout";
 import jwt from "jsonwebtoken";
-export const roles = {
-    admin:"Admin",
-    content_creator:"Content creator",
-    inactive:"Inactive"
-}
 export class Operations{
     async getAll(table:string){
         const res = await client.query(`SELECT * FROM ${table}`)

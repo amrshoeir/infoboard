@@ -1,3 +1,4 @@
+import type { Actions } from "@sveltejs/kit";
 
 export const POST = (async (event: Event): Promise<Response> =>{
   const response = new Response(null, {
@@ -8,3 +9,11 @@ export const POST = (async (event: Event): Promise<Response> =>{
 })
     return response;
 })
+export const actions= {
+  route: async({request})=>{
+    const data = await request.formData();
+    console.log(data);
+    return 'hi';
+  },
+
+}satisfies Actions
