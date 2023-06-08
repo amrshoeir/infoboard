@@ -1,0 +1,8 @@
+{
+  "description": "Consists of 2-10 Images, each playing by its own time or all by a default time.",
+  "maxCount": 5,
+  "maxSize": "3 MB",
+  "filepath": "Gallery/src/",
+  "durationPerImg": 5,
+  "defaultTransition": "fade"
+}

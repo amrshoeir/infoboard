@@ -1,0 +1,6 @@
+{
+  "description": "Simple video layout, videos can be uploaded or referenced from youtube",
+  "youtube": "",
+  "maxSize": "10 MB",
+  "filepath": "Video/src/"
+}

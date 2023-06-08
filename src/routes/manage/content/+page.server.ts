@@ -8,13 +8,13 @@ import * as fs from 'fs';
 import { to_number } from "svelte/internal";
 import path from "path";
 
-const layouts_path="src/lib/assets/Layouts/";
+const layouts_path="src/lib/assets/layouts/";
 
 export const load = (async ({cookies}) => {
     const role = cookies.get('session')
-    const username = 'sheira'
-    const user = await db.getOne('user',(await db.getIdByKey("user","username",username))) as object;
-    const content = await db.getAll('content') as object[];
+    const username = cookies.get('user')
+    const user = await db.getOne('user',(await db.getIdByKey("user","username",username)));
+    const content = await db.getAll('content');
     const layout = await db.getAll('layout') as object[];
     if (role=='admin' || role == 'content_creator'){
         return {
@@ -29,10 +29,10 @@ export const load = (async ({cookies}) => {
 export const actions = {
     addContent: async({request})=>{
         const data = await request.formData()
-        console.log(data)
+        console.log(data);
         const layout_id = to_number(data.get('layout_id'));
         const layout = await db.getOne('layout',layout_id)
-        const filePath = layouts_path + layout.layout_data.content.filepath;
+        const filePath = layouts_path + layout.layout_data.filepath;
         const files = data.getAll('media') as File[];
         const dir =data.get('name') as string;
         const uploadedFiles=[];
@@ -43,19 +43,16 @@ export const actions = {
         }
         if(dir.includes('/')){
             console.log('Title cant include /')
-            return fail(400,{message:"title can't include characters: /, \", ; "})
+            return fail(400,{message:"title can't include characters: /, \", \\ ; "})
         }
         const content_title=data.get('description') as string || 'Blank description';
         let content_json={}
         if(data.get('video_selection') as string ==='youtube') {
             content_json = {
                 title: content_title,
-                content: {
-                    layout: layout.name,
-                    youtube:true,
-                    //todo html/css layout and other text related layouts
-                    path: data.get('youtube') as string
-                }
+                layout: layout.name,
+                youtube:true,
+                path: data.get('youtube') as string
             }
         }else{
             if(files) {
@@ -80,6 +77,7 @@ export const actions = {
                             console.log(`${filename} added`)
                         })
                     } catch (err) {
+                        console.log(err)
                         return fail(500, { error: err })
                     }
                 }
@@ -89,14 +87,13 @@ export const actions = {
                 }
                 content_json = {
                     title: content_title,
-                    content: {
-                        layout: layout.name,
-                        youtube:false,
-                        file_names: file.file_names,
-                        path: path.normalize(`${filePath}${file.folder_name}/`),
-                        ...(durationArray.length > 0 && { durationArray })
-                    }
+                    layout: layout.name,
+                    youtube:false,
+                    file_names: file.file_names,
+                    path: path.normalize(`${filePath}${file.folder_name}/`),
+                    ...(durationArray.length > 0 && { durationArray })
                 }
+
             }
         }
         console.log(content_json)
@@ -104,10 +101,10 @@ export const actions = {
         if(duration<0){
             return fail(400,{message:"Duration can't be negative"})
         }
-        if(duration==0){
+        if(duration==0 || duration == null){
             duration = layout.duration;
         }
-        const contentData = {
+        const newContent = {
             id:to_number(data.get('id')),
             name:dir,
             duration:duration,
@@ -115,21 +112,22 @@ export const actions = {
             end_time:db.convertDateSQL(data.get('end_time') as string),
             content_data:JSON.stringify(content_json),
             layout_id:layout.id,
-            user_id:to_number(data.get('add_id'))
+            user_id:to_number(data.get('user_id'))
         }
-        const content = new Content(contentData);
-        console.log(content)
+        const content = new Content(newContent);
         await db.create(content);
     },
     editContent: async({request})=>{
         const data = await request.formData()
+        console.log(data)
     },
     deleteContent: async({request})=>{
         const data = await request.formData()
-        const id = to_number(data.get('delete_id'));
+        console.log(data)
+        const id = to_number(data.get('content_id'));
         const content = await db.getOne('content',id);
         if(!content.content_data.youtube){
-            fs.rmSync(content.content_data.content.path,{recursive:true,force:true})
+            fs.rmSync(content.content_data.path,{recursive:true,force:true})
             console.log(content.content_data.title + ' deleted')
             await db.delete(new Content(content));
             throw redirect(303,'/manage/content')
