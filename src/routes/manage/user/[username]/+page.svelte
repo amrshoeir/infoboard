@@ -1,6 +1,5 @@
 <script lang="ts">
   import EditUser from "$lib/components/forms/edit/EditUser.svelte";
-
   export let data
   let user = data.user;
   $: user = data.user;

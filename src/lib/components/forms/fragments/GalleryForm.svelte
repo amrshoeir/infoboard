@@ -2,12 +2,11 @@
   import Preview from "$lib/components/views/Preview.svelte";
 
   export let selectedLayout;
-  let isCustomDuration=false;
-  $: isCustomImgsDuration=[]
-  let defaultDuration;
   export let inputFiles=[]
+  let isCustomDuration=false;
+  let defaultDuration = selectedLayout.layout_data.durationPerImg;
+  let galleryDuration= [defaultDuration]
   let duration = selectedLayout.duration;
-  let dpi = selectedLayout.duration.dpi;
 
   const reader = (file)=> new Promise((resolve,reject)=> {
     const fr = new FileReader();
@@ -30,36 +29,40 @@
     inputFiles=[];
     await logFiles([...e.target.files]);
   }
-  const customDuration= (i)=>{
-    isCustomImgsDuration.forEach((elem)=>{
-      if(elem){
-        isCustomDuration=true;
-      }
-
-    })
-    isCustomImgsDuration[i]= !isCustomImgsDuration[i];
+  const changeDefault= ()=>{
+    isCustomDuration = !isCustomDuration
   }
 </script>
+<label>Description:
+  <input
+    type="text" name="description">
+</label>
 <label for="dpi">Duration per image:</label>
 <input type="number" id="dpi" title="default: 5s" name="dpi" bind:value={defaultDuration} disabled={isCustomDuration}><br>
 <label for="images-upload">Upload(max {selectedLayout.layout_data.maxCount}):</label>
 <input type="file" id="images-upload" name="media" multiple accept="image/*" required on:change={(e)=>onFilesSelect(e)}>
 {#if inputFiles.length>0}
-  <label>Custom duration? <input type="checkbox" role="switch"> </label>
+  <label>Custom duration? <input type="checkbox" role="switch" name="custom_duration" on:change={()=>{changeDefault()}}> </label>
   <figure>
     <table>
       <tr>
       {#each inputFiles as image,i}
           <th>
             Img_{i+1}
-            <input type="checkbox" role="switch"  on:change={()=>customDuration(i)}/>
-            <input type="text" placeholder="default duration" name="imgDur{i+1}" disabled={!isCustomImgsDuration[i]}>
+            <input
+              type="number"
+              placeholder="default duration"
+              name={'file'+i}
+              bind:value={galleryDuration[i]}
+              disabled={!isCustomDuration}
+              required={!isCustomDuration}
+            >
           </th>
       {/each}
         </tr>
         <tr>
           {#each inputFiles as image,i}
-          <td><Preview {image} /></td>
+          <td><Preview previewElement="img" element={image} /></td>
           {/each}
         </tr>
     </table>

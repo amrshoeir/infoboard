@@ -25,8 +25,7 @@ export class Layout{
     async edit(layout:Layout){
         const query = 'UPDATE layout SET ? WHERE id=?;'
         const formatted = client.format(query,[layout,layout.id]);
-        const result = await client.query(query,[layout,layout.id]) as any;
-        console.log(result)
+        await client.query(formatted);
         console.log("updated")
     }
     async add(layout:Layout){

@@ -1,7 +1,4 @@
 <script lang="ts">
-    import Slideshow from "$lib/components/players/Slideshow.svelte";
-    import LayoutForm from "$lib/components/forms/add/LayoutForm.svelte";
-    import NewContentForm from "$lib/components/forms/NewContentForm.svelte";
     import Image from "$lib/components/layouts/Image.svelte";
     import Video from "$lib/components/layouts/Video.svelte";
     import Gallery from "$lib/components/layouts/Gallery.svelte";
@@ -20,29 +17,21 @@
     }
 
 </script>
-<div class="container">
-  <div class="grid">
-    <section>
-      <ContentForm {user} {layout} />
-    </section>
-  </div>
-</div>
-<!--<Slideshow {content} {components} />-->
+<h2>Layouts</h2>
 <section>
-  <div class="container">
-    <LayoutView {layout} />
-  </div>
+<div class="grid">
+  <LayoutView {layout} />
+</div>
+</section>
+<h2>Contents</h2>
+<section>
   <div class="grid">
-    <ContentView {content}/>
+    <div class="container-fluid">
+      <ContentView {content} name={user.name}/>
+    </div>
   </div>
 </section>
-
-
-<!--<form method="post" action="?/test" use:enhance={(formData)=>{console.log(formData)}}>
-    <label for="test">Test video</label>
-    <input type="file" id="test" name="video" required />
-    <button>submit</button>
-</form>-->
+<ContentForm {user} {layout} />
 <style>
     .container{
         display:flex;

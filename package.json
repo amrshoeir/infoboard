@@ -32,7 +32,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@nestjs/typeorm": "^9.0.1",
 		"@picocss/pico": "^1.5.10",
 		"@sveltejs/adapter-node": "^1.2.4",
 		"bcrypt": "^5.1.0",

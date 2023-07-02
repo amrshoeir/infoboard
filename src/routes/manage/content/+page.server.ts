@@ -29,9 +29,11 @@ export const load = (async ({cookies}) => {
 export const actions = {
     addContent: async({request})=>{
         const data = await request.formData()
-        console.log(data);
+        const customDur = data.get('custom_duration') as string;
+        console.log(customDur);
         const layout_id = to_number(data.get('layout_id'));
         const layout = await db.getOne('layout',layout_id)
+        let duration = to_number(layout.duration);
         const filePath = layouts_path + layout.layout_data.filepath;
         const files = data.getAll('media') as File[];
         const dir =data.get('name') as string;
@@ -41,7 +43,7 @@ export const actions = {
             console.log('content exists')
             return fail(400,{exists:'content exists'})
         }
-        if(dir.includes('/')){
+        if(dir.includes('/') || dir.length<1){
             console.log('Title cant include /')
             return fail(400,{message:"title can't include characters: /, \", \\ ; "})
         }
@@ -56,6 +58,7 @@ export const actions = {
             }
         }else{
             if(files) {
+                duration=0;
                 await fs.mkdir(path.normalize(filePath+ `${dir}/`),{recursive:true},()=>{console.log('directory created')})
                 for (let i = 0; i < files.length; i++) {
                     try {
@@ -64,9 +67,13 @@ export const actions = {
                         }
                         console.log('passed checks')
                         if (layout.name == 'Gallery') {
-                            const duration = data.get(`file${i}`);
+                            const durations = data.get(`file${i}`);
                             const defaultDuration = data.get('dpi');
-                            durationArray.push(to_number(duration) ? to_number(duration) : to_number(defaultDuration))
+                            duration=customDur == 'on'?
+                              duration+to_number(durations):
+                              to_number(defaultDuration) * files.length;
+                            console.log(duration)
+                            durationArray.push(to_number(durations) ? to_number(durations) : to_number(defaultDuration))
                         }
                         const filename = `${crypto.randomUUID()}.${files[i].type.split('/')[1]}`
                         uploadedFiles.push(filename)
@@ -93,11 +100,11 @@ export const actions = {
                     path: path.normalize(`${filePath}${file.folder_name}/`),
                     ...(durationArray.length > 0 && { durationArray })
                 }
+                console.log(content_json)
 
             }
         }
-        console.log(content_json)
-        let duration=data.get('duration') as any;
+        duration=layout.name!='Gallery'?to_number(data.get('duration')):duration;
         if(duration<0){
             return fail(400,{message:"Duration can't be negative"})
         }
@@ -116,14 +123,29 @@ export const actions = {
         }
         const content = new Content(newContent);
         await db.create(content);
+        throw redirect(300,'/manage/content')
     },
     editContent: async({request})=>{
         const data = await request.formData()
-        console.log(data)
+        const obj = {
+            description: data.get('description'),
+            duration: data.get('duration'),
+            startDate:data.get('start_time') as string,
+            endDate:data.get('end_time') as string,
+        }
+        const content = await db.getOne('content',to_number(data.get('id')));
+        let newContent= content;
+        newContent.content_data.title = obj.description?obj.description:content.content_data.title;
+        newContent.duration = obj.duration?obj.duration:content.duration;
+        newContent.start_time = obj.startDate?db.convertDateSQL(obj.startDate):content.start_time;
+        newContent.end_time = obj.endDate?db.convertDateSQL(obj.endDate):content.end_time;
+        newContent.content_data = JSON.stringify(newContent.content_data)
+        newContent = new Content(newContent)
+        await db.update(newContent, content.id)
+        throw redirect(303,'/manage/content')
     },
     deleteContent: async({request})=>{
         const data = await request.formData()
-        console.log(data)
         const id = to_number(data.get('content_id'));
         const content = await db.getOne('content',id);
         if(!content.content_data.youtube){
@@ -134,17 +156,29 @@ export const actions = {
         }
         else{
             await db.delete(new Content(content))
+            throw redirect(300,'/manage/content')
         }
 
     },
     editLayout: async({request})=>{
         const data = await request.formData()
+        const obj = {
+            description: data.get('description'),
+            duration: data.get('duration'),
+        }
+        const layout = await db.getOne('layout',to_number(data.get('id')));
+        let newLayout= layout;
+        newLayout.layout_data.description = obj.description?obj.description:layout.layout_data.description;
+        newLayout.duration = obj.duration?obj.duration:layout.duration;
+        newLayout.layout_data = JSON.stringify(newLayout.layout_data)
+        newLayout = new Layout(layout)
+        console.log(newLayout)
+        await db.update(newLayout, layout.id)
+        throw redirect(303,'/manage/content')
     },
     addLayout: async({request})=>{
         const data = await request.formData();
         const layout_data = data.get('layout_data') as Blob;
-        // const current_adding_layout= await data.get('name') as string;
-        // const path = `${layouts_path}${current_adding_layout}/`;
         const layoutData = {
                 id:to_number(data.get('id')),
                 name:data.get('name') as string,
@@ -166,11 +200,5 @@ export const actions = {
            return fail(500,{error:err})
         }
 
-    },
-    test: async({request})=>{
-        const data = await request.formData();
-        console.log(data)
-        const video = data.get('video') as File;
-        console.log(video)
     }
 }satisfies Actions

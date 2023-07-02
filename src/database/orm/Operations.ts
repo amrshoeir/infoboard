@@ -1,4 +1,5 @@
 import {client} from "../db"
+import { start_mysql } from "$database/db"
 import bcrypt from 'bcrypt';
 import {User} from "../Entities/User";
 import {Content} from "../Entities/Content";
@@ -86,7 +87,6 @@ export class Operations{
             await layout.edit(layout);
 
         }
-
     }
     async delete(input:User|Content|Layout){
         if(input instanceof User){
@@ -113,6 +113,7 @@ export class Operations{
             return false;
         }
     }
+
     async checkRole(email:string):Promise<string>{
         const query = "SELECT role FROM user WHERE email=?";
         const formatted = client.format(query,email)
@@ -121,22 +122,18 @@ export class Operations{
     }
     generateJWT(user: User): string {
         return jwt.sign({userId: user.id}, process.env.JWT_SECRET as string, {
-        expiresIn: '2m',
-    });
-  }
+            expiresIn: '2m',
+        });
+    }
     convertDateSQL(date?:string):string{
         let dt = new Date().toISOString().split("T");
         // Changes "YYYY-MM-DDTHH:mm:ss.sssZ" to "YYYY-MM-DD HH:MM:SS"
         if(date){
-             dt = new Date(date).toISOString().split("T")
+            dt = new Date(date).toISOString().split("T")
         }
         const mysqlTime = dt[0] + " " + dt[1].slice(0, 8);
         return mysqlTime;
     }
-    convertDateJS(epoch_time:number){
-        const jsDate = new Date(epoch_time * 1000);
-        return jsDate;
-}
 
 }
 const db = new Operations();

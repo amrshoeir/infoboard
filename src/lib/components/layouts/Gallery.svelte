@@ -1,12 +1,12 @@
 <script>
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
-  export let src;
   export let element;
+
+  let src = element.src
   let ndx=0
   let timeLeft=element.imagesDuration[ndx];
   let interval;
-  console.log(element)
   const next = () => {
     ndx = (ndx + 1) % src.length;
     timeLeft=element.imagesDuration[ndx];
@@ -14,7 +14,7 @@
   function startAutoPlay() {
     interval = setInterval(() => {
       timeLeft--;
-      if (timeLeft === 0) {
+      if (timeLeft === -1) {
         next();
       }
     }, 1000);
@@ -28,9 +28,8 @@
   <div class="numberText">{ndx+1} / {src.length}</div>
   {#each [src[ndx]] as src (ndx)}
     <img
-      src={encodeURI(src)}
+      {src}
       alt=""
-      transition:fade
     />
   {/each}
 <style>

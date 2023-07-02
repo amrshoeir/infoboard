@@ -1,11 +1,10 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import Modal from "$lib/components/Modal.svelte";
-  import { fail } from "@sveltejs/kit";
+  import { form } from "svelte-forms";
   export let user;
   let role = user.role;
   let deleteModal= false;
-  console.log("mounted");
 
   function openDelete() {
     deleteModal=true;
@@ -13,7 +12,7 @@
 
 </script>
 <h2>Edit user</h2>
-<form method="POST" action="/manage/user?/edit" use:enhance>
+<form method="POST" action="/manage/user?/edit" use:enhance enctype="multipart/form-data">
   <label>Username: <input type="text" name="username"  bind:value={user.username} ></label>
   <label>Password: <input type="password" name="password" placeholder="No change"></label>
   <label>Email: <input type="email" name="email" bind:value={user.email} ></label>

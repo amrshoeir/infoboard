@@ -86,10 +86,11 @@ export const actions = {
         const username = cookies.get('user')
         if(user.username != username){
             await db.delete(new User(user));
+            throw redirect(303,"/manage/user")
         }
         else{
             console.log('cannot delete user')
-            return error(400,)
+            return fail(400,{message:"can't delete currently active user :/"})
         }
 
     }

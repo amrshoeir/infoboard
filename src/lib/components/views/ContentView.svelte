@@ -3,9 +3,8 @@
   import Image from "../layouts/Image.svelte";
   import Gallery from "../layouts/Gallery.svelte";
   import Video from "../layouts/Video.svelte";
-  import Modal from "$lib/components/Modal.svelte";
-  import EditContent from "$lib/components/forms/edit/EditContent.svelte";
   export let content;
+  export let name;
   let showModal = false;
   $:content;
   let components = [
@@ -14,13 +13,13 @@
     Video
   ]
 </script>
-<div class="container">
+<div class="grid">
   {#each content as item,i}
     <details>
       <summary role="button" class="primary outline">{item.name} -- {item.content_data.layout} Layout</summary>
       <hgroup>
         <h3>
-          {item.content_data.title}
+          <a href="/manage/content/{item.id}">{item.content_data.title}</a>
         </h3>
         <h5>
           {#if new Date() < item.start_time}
@@ -37,26 +36,16 @@
           Duration: {item.duration} seconds
         </h5>
         <h5>
+          Author: {name}
         </h5>
       </hgroup>
       <figure>
       </figure>
-    <form method="POST" use:enhance={()=>{location.reload()}}>
+    <form method="POST" action="?/deleteContent" use:enhance={()=>{location.reload()}}>
       <input type="hidden" id="content-element" name="content_id" bind:value={item.id} />
-      <div class="grid">
-        <button type="button" on:click={()=>showModal=true}>
-          Edit
-        </button>
-        <button formaction="?/deleteContent">
-          Delete
-        </button>
-      </div>
+        <button type="submit"> Delete</button>
     </form>
     </details>
-    <Modal bind:showModal>
-      <h2 slot="header">Edit content</h2>
-      <EditContent content={item} bind:showModal />
-    </Modal>
   {/each}
 </div>
 <style>

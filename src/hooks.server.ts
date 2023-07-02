@@ -17,7 +17,7 @@ export const handle:Handle = (async ({ event,resolve }):Promise<Response> => {
     return resolve(event)
 })
 start_mysql().then(async ()=>{
-    console.log("MYSQL Connected");
+    console.log("MYSQL Connected")
     console.log("Initializing DB..");
     await db.initializeDB();
     if(await db.checkIfExists('user')){
