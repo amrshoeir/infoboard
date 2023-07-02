@@ -57,7 +57,7 @@
     interval = setInterval(() => {
       timeLeft--;
       durationPercent = (timeLeft / displayElements[ndx].duration) * 100;
-      if (timeLeft === 0) {
+      if (timeLeft === -1) {
         next();
       }
     }, 1000);

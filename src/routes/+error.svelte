@@ -7,9 +7,8 @@
         padding: 40px;
     }
 </style>
-
 <div class="container">
-    <h1>Bad request :/</h1>
+    <h1>Oops!</h1>
     {#if $page.status === 500}
         <div>
             <h2>500 Internal Server Error</h2>

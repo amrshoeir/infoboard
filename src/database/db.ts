@@ -11,6 +11,7 @@ export const client = await mysql.createConnection({
 
 export async function start_mysql() {
     console.log("Starting MYSQL...");
+
     return client.connect();
 };
 

@@ -151,7 +151,6 @@
           {/if}
           {#each inputFiles as file,i}
             <figure>
-
               <svelte:element id="preview" this={previewElement} src={file.result}></svelte:element><br>
             </figure>
             {#if previewElement==='img' && inputFiles.length>1}

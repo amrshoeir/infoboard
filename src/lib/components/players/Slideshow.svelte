@@ -1,8 +1,5 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import {enhance} from '$app/forms';
-  import Modal from "$lib/components/Modal.svelte";
-
   export let content
   export let displayElements=[];
   export let components;
@@ -71,16 +68,6 @@
   }
   onMount(startAutoPlay);
   onDestroy(stopAutoPlay);
-  // const previousSlide= () => {
-  //   ndx = (ndx+numSlides - 1) % numSlides;
-  //   timeLeft = 15; // Reset time for new slide
-  //   durationPercent = 100; // Reset duration bar
-  // }
-  const reload =() => {
-      return async()=>{
-        location.reload();
-      }
-    }
 
 </script>
 
