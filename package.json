@@ -32,10 +32,14 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@picocss/pico": "^1.5.10",
+		"@sveltejs/adapter-node": "^1.2.4",
 		"bcrypt": "^5.1.0",
+		"dotenv": "^16.1.4",
 		"jsonwebtoken": "^9.0.0",
 		"mysql2": "^3.2.0",
-		"reflect-metadata": "^0.1.13",
-		"typeorm": "^0.3.12"
+		"svelte-forms": "^2.3.1",
+		"svelte-fullscreen": "^2.0.0",
+		"zod": "^3.21.4"
 	}
 }

@@ -2,10 +2,9 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		import 'reflect-metadata'
 		// interface Error {}
 		// interface Locals {}
-		// interface PageData {}
+		// interface PageData{content:any, [key:string]:any}
 		// interface Platform {}
 	}
 }
